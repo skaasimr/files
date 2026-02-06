@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer - System Flow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-8 text-purple-700">AI Resume Analyzer - System Flow</h1>
+        
+        <!-- Resume Analysis Flow -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">📄 Resume Analysis Flow</h2>
+            
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div class="flex-grow">
+                        <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-600">
+                            <h3 class="font-bold text-purple-900">User Uploads Files</h3>
+                            <p class="text-gray-600 text-sm mt-1">User selects job description PDF and resume PDF through the web interface</p>
+                            <code class="text-xs bg-white px-2 py-1 rounded mt-2 inline-block">Frontend: HTML form with file inputs</code>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="text-purple-600 text-2xl">↓</div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div class="flex-grow">
+                        <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-600">
+                            <h3 class="font-bold text-blue-900">Frontend Sends Data to Backend</h3>
+                            <p class="text-gray-600 text-sm mt-1">JavaScript creates FormData and sends POST request</p>
+                            <pre class="text-xs bg-white p-2 rounded mt-2 overflow-x-auto"><code>fetch('http://localhost:5000/api/analyze-resume', {
+  method: 'POST',
+  body: formData  // Contains both PDF files
+})</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="text-purple-600 text-2xl">↓</div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div class="flex-grow">
+                        <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-600">
+                            <h3 class="font-bold text-green-900">Backend Extracts PDF Text</h3>
+                            <p class="text-gray-600 text-sm mt-1">Flask receives files and uses pdfplumber to extract text</p>
+                            <pre class="text-xs bg-white p-2 rounded mt-2 overflow-x-auto"><code>with pdfplumber.open(pdf_file) as pdf:
+    text = "\n".join(page.extract_text() for page in pdf.pages)</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="text-purple-600 text-2xl">↓</div>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">4</div>
+                    <div class="flex-grow">
+                        <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-600">
+                            <h3 class="font-bold text-yellow-900">Backend Creates Prompt</h3>
+                            <p class="text-gray-600 text-sm mt-1">Combines job description and resume into structured prompt</p>
+                            <pre class="text-xs bg-white p-2 rounded mt-2 overflow-x-auto"><code>prompt = f"""
+JOB DESCRIPTION:
+{job_description_text}
+
+RESUME:
+{resume_text}
+
+Analyze and provide: Match Score, Strengths, Gaps...
+"""</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="text-purple-600 text-2xl">↓</div>
+                </div>
+                
+                <!-- Step 5 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">5</div>
+                    <div class="flex-grow">
+                        <div class="bg-indigo-50 rounded-lg p-4 border-l-4 border-indigo-600">
+                            <h3 class="font-bold text-indigo-900">Call Groq API</h3>
+                            <p class="text-gray-600 text-sm mt-1">Send prompt to Groq's LLaMA 3.1 70B model</p>
+                            <pre class="text-xs bg-white p-2 rounded mt-2 overflow-x-auto"><code>chat_completion = groq_client.chat.completions.create(
+    messages=[{"role": "user", "content": prompt}],
+    model="llama-3.1-70b-versatile",
+    max_tokens=2000
+)</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="text-purple-600 text-2xl">↓</div>
+                </div>
+                
+                <!-- Step 6 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">6</div>
+                    <div class="flex-grow">
+                        <div class="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-600">
+                            <h3 class="font-bold text-pink-900">AI Analyzes & Returns Result</h3>
+                            <p class="text-gray-600 text-sm mt-1">Groq processes request and returns detailed analysis</p>
+                            <div class="text-xs bg-white p-2 rounded mt-2">
+                                <strong>Analysis includes:</strong>
+                                <ul class="list-disc ml-4 mt-1">
+                                    <li>Overall match score (1-10)</li>
+                                    <li>Key strengths</li>
+                                    <li>Gaps and weaknesses</li>
+                                    <li>Specific improvements</li>
+                                    <li>Keywords to add</li>
+                                    <li>Action items</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="text-purple-600 text-2xl">↓</div>
+                </div>
+                
+                <!-- Step 7 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">7</div>
+                    <div class="flex-grow">
+                        <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-600">
+                            <h3 class="font-bold text-purple-900">Display Results to User</h3>
+                            <p class="text-gray-600 text-sm mt-1">Frontend formats and displays the analysis in a beautiful interface</p>
+                            <code class="text-xs bg-white px-2 py-1 rounded mt-2 inline-block">Frontend: Update DOM with formatted results</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chatbot Flow -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">💬 Chatbot Flow</h2>
+            
+            <div class="space-y-6">
+                <!-- Chat Step 1 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div class="flex-grow">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h3 class="font-bold text-blue-900">User Sends Message</h3>
+                            <p class="text-gray-600 text-sm">User types question and clicks send</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center"><div class="text-blue-600 text-2xl">↓</div></div>
+                
+                <!-- Chat Step 2 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div class="flex-grow">
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h3 class="font-bold text-green-900">POST to /api/chat</h3>
+                            <p class="text-gray-600 text-sm">Send message + conversation history</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center"><div class="text-blue-600 text-2xl">↓</div></div>
+                
+                <!-- Chat Step 3 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div class="flex-grow">
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <h3 class="font-bold text-yellow-900">Groq Generates Response</h3>
+                            <p class="text-gray-600 text-sm">AI processes with career advisor context</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center"><div class="text-blue-600 text-2xl">↓</div></div>
+                
+                <!-- Chat Step 4 -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">4</div>
+                    <div class="flex-grow">
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h3 class="font-bold text-purple-900">Display AI Response</h3>
+                            <p class="text-gray-600 text-sm">Update chat UI with response</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Flow Diagram -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">🔄 Complete Data Flow</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Frontend -->
+                <div class="bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg p-6 text-center">
+                    <div class="text-4xl mb-3">🌐</div>
+                    <h3 class="font-bold text-purple-900 text-lg mb-2">Frontend</h3>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div>• HTML/CSS/JavaScript</div>
+                        <div>• Tailwind CSS</div>
+                        <div>• File upload UI</div>
+                        <div>• Chat interface</div>
+                        <div>• Results display</div>
+                    </div>
+                </div>
+                
+                <!-- Backend -->
+                <div class="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg p-6 text-center">
+                    <div class="text-4xl mb-3">⚙️</div>
+                    <h3 class="font-bold text-blue-900 text-lg mb-2">Backend</h3>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div>• Flask (Python)</div>
+                        <div>• pdfplumber</div>
+                        <div>• Groq SDK</div>
+                        <div>• CORS enabled</div>
+                        <div>• API endpoints</div>
+                    </div>
+                </div>
+                
+                <!-- Groq API -->
+                <div class="bg-gradient-to-br from-green-100 to-green-200 rounded-lg p-6 text-center">
+                    <div class="text-4xl mb-3">🤖</div>
+                    <h3 class="font-bold text-green-900 text-lg mb-2">Groq AI</h3>
+                    <div class="text-sm text-gray-700 space-y-1">
+                        <div>• LLaMA 3.1 70B</div>
+                        <div>• Fast inference</div>
+                        <div>• Chat completions</div>
+                        <div>• Context aware</div>
+                        <div>• High accuracy</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex items-center justify-center gap-4 text-gray-600">
+                <div class="text-center">
+                    <div class="font-bold">Request</div>
+                    <div class="text-2xl">→</div>
+                </div>
+                <div class="text-center">
+                    <div class="font-bold">Process</div>
+                    <div class="text-2xl">→</div>
+                </div>
+                <div class="text-center">
+                    <div class="font-bold">Response</div>
+                    <div class="text-2xl">→</div>
+                </div>
+                <div class="text-center">
+                    <div class="font-bold">Display</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Key Files -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mt-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">📁 Key Files</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-bold text-purple-700 mb-2">app.py</h3>
+                    <p class="text-sm text-gray-600">Flask backend server with API endpoints and Groq integration</p>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-bold text-purple-700 mb-2">templates/index.html</h3>
+                    <p class="text-sm text-gray-600">Frontend interface with upload forms and chat UI</p>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-bold text-purple-700 mb-2">.env</h3>
+                    <p class="text-sm text-gray-600">Environment variables (GROQ_API_KEY)</p>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-bold text-purple-700 mb-2">requirements.txt</h3>
+                    <p class="text-sm text-gray-600">Python dependencies list</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
